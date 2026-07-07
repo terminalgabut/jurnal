@@ -8,7 +8,7 @@ export default {
             </button>
 
             <router-link to="/" class="header-logo ml-2">
-                Dashboard Duitku
+                 Daily's
             </router-link>
             
             <div class="header-nav ml-auto flex gap-2">
