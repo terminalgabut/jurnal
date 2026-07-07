@@ -13,10 +13,10 @@ export default `
             </button>
         </header>
 
-        <!-- FORM UTAMA -->
+        
         <div class="space-y-6 text-left">
             
-            <!-- 1. INFORMASI UMUM -->
+            
             <div class="bg-slate-50 p-4 rounded-2xl space-y-3">
                 <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">📋 Informasi Utama</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -41,7 +41,7 @@ export default `
                 </div>
             </div>
 
-            <!-- 2. METRIK UTAMA -->
+            
             <div class="bg-indigo-50/40 p-4 rounded-2xl space-y-3">
                 <h3 class="text-xs font-black text-indigo-500 uppercase tracking-wider">📊 Ringkasan Metrik Utama</h3>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -84,7 +84,7 @@ export default `
                 </div>
             </div>
 
-            <!-- 3. TABEL SPLIT PER KILOMETER -->
+            
             <div class="bg-slate-50 p-4 rounded-2xl space-y-3">
                 <div class="flex justify-between items-center">
                     <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">⏱️ 1. Split Per Kilometer</h3>
@@ -102,7 +102,7 @@ export default `
                 </div>
             </div>
 
-            <!-- 4. TABEL LAP (PUTARAN) -->
+            
             <div class="bg-slate-50 p-4 rounded-2xl space-y-3">
                 <div class="flex justify-between items-center">
                     <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">🔄 2. Putaran (Laps)</h3>
@@ -123,7 +123,7 @@ export default `
                 </div>
             </div>
 
-            <!-- 5. ANALISIS ZONA PACE -->
+            
             <div class="bg-slate-50 p-4 rounded-2xl space-y-3">
                 <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">⚡ Analisis Zona Pace / Intensitas Murni</h3>
                 <div class="space-y-2">
@@ -145,7 +145,7 @@ export default `
                 </div>
             </div>
 
-            <!-- 6. CATATAN EVALUASI & PERASAAN -->
+            
             <div class="bg-slate-50 p-4 rounded-2xl space-y-3">
                 <h3 class="text-xs font-black text-slate-400 uppercase tracking-wider">📝 Catatan Evaluasi & Perasaan</h3>
                 <div>
