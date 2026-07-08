@@ -1,17 +1,17 @@
-// root/components/activities.js
+// root/view/activities.js
 import activitiesTemplate from './activitiesView.js';
-import { supabaseClient } from '../js/services/supabaseClient.js'; // Menggunakan client yang sudah diekspor
+import { supabaseClient } from '../js/services/supabaseClient.js';
 
 export default {
     name: 'ActivitiesView',
     template: activitiesTemplate,
     setup() {
         const { ref, onMounted, nextTick, computed, watch } = Vue;
+        const router = VueRouter.useRouter(); // AKTIFKAN ROUTER KEMBALI
         
         const activities = ref([]);
         const loading = ref(true);
         const filterType = ref('All');
-        const selectedActivity = ref(null); // State reaktif untuk melacak baris mana yang sedang dibuka detailnya
 
         // Logika Penyaringan Data Sederhana (All, Run, Sleep)
         const filteredActivities = computed(() => {
@@ -23,14 +23,12 @@ export default {
             });
         });
 
-        // Pantau filter untuk merender ulang ikon Lucide jika diperlukan
         watch(filterType, () => {
             nextTick(() => {
                 if (window.lucide) window.lucide.createIcons();
             });
         });
 
-        // Menarik data dari tabel baru: run_activities
         const loadActivities = async () => {
             loading.value = true;
             try {
@@ -51,11 +49,18 @@ export default {
             }
         };
 
-        // Selector jalur ikon PNG dinamis
+        // NAVIGASI ROUTER KE HALAMAN DETAIL PENUH
+        const goToDetail = (id) => {
+            router.push({ 
+                name: 'activity-detail', 
+                params: { id: id } 
+            });
+        };
+
         const getIconName = (type) => {
             const normalType = (type || '').toLowerCase();
             if (normalType === 'run') return 'icon/run.png';
-            if (normalType === 'sleep') return 'icon/sleep.png'; // Jalur untuk update sleep mendatang
+            if (normalType === 'sleep') return 'icon/sleep.png';
             return 'icon/default.png';
         };
 
@@ -64,18 +69,6 @@ export default {
             if (normalType === 'run') return 'bg-emerald-500/10 ring-1 ring-emerald-500/20';
             if (normalType === 'sleep') return 'bg-indigo-500/10 ring-1 ring-indigo-500/20';
             return 'bg-slate-500/10 ring-1 ring-slate-500/20';
-        };
-
-        // Fungsi kontrol interaksi modal pop-up detail murni tanpa ganti halaman router
-        const openDetailModal = (activity) => {
-            selectedActivity.value = activity;
-            nextTick(() => {
-                if (window.lucide) window.lucide.createIcons();
-            });
-        };
-
-        const closeDetailModal = () => {
-            selectedActivity.value = null;
         };
         
         const formatDate = (dateStr) => {
@@ -88,8 +81,8 @@ export default {
         onMounted(loadActivities);
 
         return { 
-            activities, filteredActivities, loading, filterType, selectedActivity,
-            loadActivities, openDetailModal, closeDetailModal, formatDate, 
+            activities, filteredActivities, loading, filterType,
+            loadActivities, goToDetail, formatDate, 
             getIconName, getTypeIconClass
         };
     }
