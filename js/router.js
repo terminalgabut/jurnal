@@ -1,8 +1,8 @@
 import { Logger } from './services/debug.js';
 
 const Dashboard = () => import('../views/dashboard.js');
-/*const Activities = () => import('../views/activities.js');
-const Analysis = () => import('../views/AnalysisView.js');
+const Activities = () => import('../views/activities.js');
+/*const Analysis = () => import('../views/AnalysisView.js');
 const ActivityDetail = () => import('../views/activityDetail.js'); 
 const WeightTrainingDetail = () => import('../views/WeightTrainingDetail.js');
 const TrainingLog = () => import('../views/TrainingLogView.js');
@@ -18,12 +18,12 @@ const routes = [
         name: 'dashboard',
         component: Dashboard 
     },
-    /*{ 
+    { 
         path: '/activities', 
         name: 'activities',
         component: Activities 
     },
-    { 
+   /* { 
         path: '/coach', 
         name: 'coach',
         component: Coach,
