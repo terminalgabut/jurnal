@@ -12,11 +12,11 @@ export default {
                 <span class="nav-label text-[8px] font-black uppercase tracking-tighter group-[.router-link-active]:text-indigo-600 text-slate-400">Home</span>
             </router-link>
 
-            <router-link to="/history" class="nav-item flex flex-col items-center gap-1 group flex-1">
+            <router-link to="/activities class="nav-item flex flex-col items-center gap-1 group flex-1">
                 <div class="p-2 rounded-xl group-[.router-link-active]:bg-indigo-50 group-[.router-link-active]:text-indigo-600 text-slate-400 transition-all">
-                    <i data-lucide="history" class="w-5 h-5"></i>
+                    <i data-lucide="activity" class="w-5 h-5"></i>
                 </div>
-                <span class="nav-label text-[8px] font-black uppercase tracking-tighter group-[.router-link-active]:text-indigo-600 text-slate-400">Riwayat</span>
+                <span class="nav-label text-[8px] font-black uppercase tracking-tighter group-[.router-link-active]:text-indigo-600 text-slate-400">Aktivitas</span>
             </router-link>
 
             <button @click="$emit('open-input')" class="nav-item flex flex-col items-center gap-1 flex-1 outline-none group">
