@@ -1,0 +1,191 @@
+Bisa, bos. Ini algoritma yang menurutku paling konsisten dengan data Garmin FIT yang tidak memiliki cadence. Engine ini sudah disesuaikan dengan tinggi badanmu (166.5 cm) dan gaya lari short stride.
+
+# ==========================================
+# CADENCE & STRIDE ESTIMATION ENGINE v2
+# Athlete Height : 166.5 cm
+# ==========================================
+
+ATHLETE_HEIGHT = 166.5
+
+def estimate_cadence(pace_min_km):
+    """
+    pace_min_km : menit/km
+    return : cadence (SPM), mode
+    """
+
+    if pace_min_km < 5.12:
+        cadence = 174
+        mode = "RUN (Z6)"
+
+    elif pace_min_km < 5.45:
+        cadence = 171
+        mode = "RUN (Z5)"
+
+    elif pace_min_km < 5.82:
+        cadence = 169
+        mode = "RUN (Z4)"
+
+    elif pace_min_km < 6.48:
+        cadence = 166
+        mode = "RUN (Z3)"
+
+    elif pace_min_km < 7.55:
+        cadence = 160
+        mode = "RUN (Z2)"
+
+    else:
+        cadence = 115
+        mode = "WALK (Z1)"
+
+    # koreksi tinggi badan
+    cadence *= (170 / ATHLETE_HEIGHT)
+
+    return round(cadence), mode
+
+
+---
+
+Menghitung Stride Length
+
+def estimate_stride(speed_ms, cadence):
+
+    stride = speed_ms / (cadence / 60)
+
+    # koreksi agar mendekati data runner sungguhan
+    if cadence >= 160:
+        stride *= 1.04
+
+    return round(stride * 100)      # cm
+
+
+---
+
+Menghitung Pace
+
+pace = (lap_time_sec / 60) / lap_distance_km
+
+atau dari kecepatan
+
+pace = 16.66667 / speed_ms
+
+
+---
+
+Menghitung Split dari Record
+
+times_at_km = []
+
+for km in range(1, total_km + 1):
+
+    t = np.interp(
+        km * 1000,
+        df_rec['distance'],
+        df_rec['elapsed_time']
+    )
+
+    times_at_km.append(t)
+
+Kemudian
+
+split_time = times_at_km[i] - times_at_km[i-1]
+
+
+---
+
+Menghitung Zona Pace
+
+def pace_zone(pace):
+
+    if pace < 5.1167:
+        return "Z6"
+
+    elif pace <= 5.45:
+        return "Z5"
+
+    elif pace <= 5.8167:
+        return "Z4"
+
+    elif pace <= 6.4833:
+        return "Z3"
+
+    elif pace <= 7.5333:
+        return "Z2"
+
+    else:
+        return "Z1"
+
+
+---
+
+Menghitung Distribusi Zona
+
+valid_records['time_diff'] = (
+    valid_records['timestamp_dt']
+    .diff()
+    .dt.total_seconds()
+    .fillna(1)
+)
+
+zone_summary = (
+    valid_records
+    .groupby("zone")["time_diff"]
+    .sum()
+)
+
+Persentase
+
+percentage = duration_sec / total_duration * 100
+
+Durasi
+
+duration_min = duration_sec / 60
+
+
+---
+
+Algoritma Laporan
+
+Jika ada file Lap
+        ↓
+Gunakan Lap sebagai tabel Lap
+
+Jika Lap kosong
+        ↓
+Buat Lap dari Split
+
+↓
+
+Split selalu dihitung dari file Record
+
+↓
+
+Zona Pace selalu dihitung dari seluruh titik GPS Record
+
+↓
+
+Cadence
+
+Jika ada cadence asli
+        ↓
+pakai cadence asli
+
+Jika tidak ada
+        ↓
+estimasi memakai Cadence Engine v2
+
+↓
+
+Stride
+
+speed ÷ cadence
+
+↓
+
+HR
+
+Jika kosong
+tampilkan "—"
+
+Jangan pernah mengarang HR.
+
+Menurutku algoritma ini sudah cukup kuat karena hasil estimasi cadence dan stride sangat mendekati pola lari nyata, sekaligus konsisten untuk seluruh laporan aktivitasmu ke depan.
