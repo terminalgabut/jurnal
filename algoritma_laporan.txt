@@ -189,3 +189,266 @@ tampilkan "—"
 Jangan pernah mengarang HR.
 
 Menurutku algoritma ini sudah cukup kuat karena hasil estimasi cadence dan stride sangat mendekati pola lari nyata, sekaligus konsisten untuk seluruh laporan aktivitasmu ke depan.
+
+
+----
+
+Berikut template kosong yang bisa kita gunakan untuk setiap sesi lari ke depannya. Format ini mengikuti laporan yang sudah kita pakai selama ini dan kompatibel dengan output algoritma Cadence & Stride Engine v2.
+
+
+---
+
+🏃‍♂️ RUNNING SESSION REPORT
+
+📝 EXECUTIVE SUMMARY
+
+Activity Name: —
+
+Activity Type: —
+
+Date / Time: —
+
+Shoes / Gear: —
+
+Primary Target: —
+
+
+
+---
+
+📊 METRIC OVERVIEW
+
+Parameter	Value	Status / Assessment
+
+Total Distance	— KM	—
+Total Duration	—	—
+Average Pace	— /km	—
+User RPE	— /10	—
+Post Heart Rate	— BPM	—
+Average Cadence (v2)	— SPM	Engine v2
+Average Stride Length	— cm	Engine v2
+Elevation Gain	— m	—
+Calories	—	Jika tersedia
+
+
+
+---
+
+⏱️ LAP SPLITS (Engine v2 Verified)
+
+Lap	Distance	Time	Pace	Avg Cadence (v2)	Stride Length	Activity Mode
+
+1	—	—	—	—	—	—
+2	—	—	—	—	—	—
+3	—	—	—	—	—	—
+4	—	—	—	—	—	—
+5	—	—	—	—	—	—
+...	...	...	...	...	...	...
+
+
+
+---
+
+📈 KM SPLITS (GPS Record Based)
+
+KM	Pace	Notes
+
+1	—	—
+2	—	—
+3	—	—
+4	—	—
+5	—	—
+...	...	...
+
+
+
+---
+
+⚡ Analisis Zona Pace / Intensitas Murni (GPS Record Based)
+
+Zona Pace	Rentang Pace	Deskripsi	Persentase	Durasi
+
+Z6	< 5:07/km	Anaerobik (Sprint Maksimal)	— %	— min
+Z5	5:08–5:27/km	VO₂ Max (Sangat Keras)	— %	— min
+Z4	5:28–5:49/km	Threshold	— %	— min
+Z3	5:50–6:29/km	Tempo	— %	— min
+Z2	6:30–7:32/km	Endurance	— %	— min
+Z1	> 7:33/km	Recovery / Walk	— %	— min
+
+
+
+---
+
+📊 PHYSIOLOGICAL STATUS (myTF.run)
+
+Parameter	Status
+
+Risk of Injury	—
+Acute-to-Chronic Workload Ratio (ACR)	— %
+Run Health	—
+Mileage Indicator	—
+Recovery Recommendation	—
+Training Forecast	—
+
+
+
+---
+
+👟 BIOMECHANICAL ANALYSIS
+
+Cadence Analysis
+
+Average Cadence:
+
+Peak Cadence:
+
+Cadence Stability:
+
+Evaluation:
+
+
+Stride Analysis
+
+Average Stride:
+
+Maximum Stride:
+
+Stride Efficiency:
+
+Evaluation:
+
+
+Shoe Performance
+
+Toe-off:
+
+Cushioning:
+
+Stability:
+
+Overall Feeling:
+
+
+
+---
+
+🧠 TRAINING ANALYSIS
+
+Goal Achievement
+
+Planned Workout:
+
+Executed Workout:
+
+Completion Rate:
+
+
+Positive Findings
+
+—
+
+—
+
+—
+
+
+Limiting Factors
+
+—
+
+—
+
+—
+
+
+Recovery Status
+
+Legs:
+
+Cardiovascular:
+
+Breathing:
+
+Muscle Fatigue:
+
+
+
+---
+
+📝 PERSONAL NOTES
+
+During Run
+
+—
+
+
+After Run
+
+—
+
+
+Nutrition
+
+Before:
+
+During:
+
+After:
+
+
+Sleep
+
+Night Sleep:
+
+Nap:
+
+Total Sleep:
+
+
+
+---
+
+🔮 NEXT SESSION PLAN
+
+Planned Workout
+
+—
+
+
+Focus
+
+—
+
+
+Risk Management
+
+—
+
+
+Coach's Notes
+
+—
+
+
+
+---
+
+📌 ENGINE INFORMATION
+
+Cadence Estimation Engine: v2
+
+Stride Estimation Engine: v2
+
+Height Correction: 170 / Athlete Height
+
+Pace Zone Model: Z1–Z6 (Custom)
+
+Data Source: Session.csv + Record.csv + Lap.csv
+
+Data Purity: HR, cadence, dan metrik asli tidak dimodifikasi; estimasi biomekanik dihitung terpisah menggunakan Engine v2.
+
+
+
+---
+
+Menurut saya template ini sudah cukup lengkap dan konsisten. Ke depannya, setiap kali kamu mengirim Session.csv + Record.csv (+ Lap.csv jika ada), kita bisa menghasilkan laporan dengan format yang sama sehingga mudah membandingkan progres dari minggu ke minggu menjelang Test Race 5K.
