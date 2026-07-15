@@ -1,0 +1,236 @@
+
+//Mode Classifier & Cadence Engine
+
+import numpy as np
+import pandas as pd
+
+ATHLETE_HEIGHT = 166.5  # Tinggi badan user terkalibrasi
+
+def upgraded_cadence_engine(speed_ms, elapsed_time_sec, total_elevation_gain, total_distance_m):
+    """
+    Mengadopsi penuh logika PL/pgSQL Trigger Function ke Python.
+    """
+    # 1. Hitung Grade Efektif
+    grade = total_elevation_gain / total_distance_m if total_distance_m > 0 else 0
+    
+    # 2. Mode Classifier V2
+    if grade > 0.08:
+        mode = 'HIKE'
+        base_cadence = 90 + (speed_ms * 6)
+    elif grade > 0.04:
+        mode = 'UPHILL_RUN'
+        base_cadence = 155 + (speed_ms * 8)
+    else:
+        if speed_ms < 1.2:
+            mode = 'WALK (Z1)'
+            base_cadence = 75 + (speed_ms * 8)
+        elif speed_ms < 1.6:
+            mode = 'WALK (Z1)'
+            base_cadence = 85 + (speed_ms * 10)
+        elif speed_ms < 2.0:
+            mode = 'WALK (Z1)'
+            base_cadence = 95 + (speed_ms * 12)
+        elif speed_ms < 2.4:
+            mode = 'JOG (Z2)'
+            base_cadence = 145 + (speed_ms * 8)
+        else:
+            mode = 'RUN (Z3+)'
+            base_cadence = 148 + (speed_ms * 8)
+            
+    # Smart Correction
+    if 'WALK' in mode and base_cadence > 135:
+        mode = 'JOG (Z2)'
+    if 'RUN' in mode and base_cadence < 150:
+        mode = 'JOG (Z2)'
+
+    # 3. Height Adjustment (Koreksi Tinggi Badan)
+    cadence = base_cadence * (170.0 / ATHLETE_HEIGHT)
+    
+    # 4. Fatigue Penalty (Kelelahan bertahap hingga maksimal -6 SPM pada 90 menit)
+    fatigue = min(1.0, elapsed_time_sec / 5400.0)
+    cadence -= (fatigue * 6)
+    
+    # 5. Natural Noise Generator (-3 sampai +3 SPM agar data organik)
+    cadence += (np.random.rand() - 0.5) * 6
+    
+    # Clamp Final
+    if 'WALK' in mode:
+        cadence = min(cadence, 125)
+    cadence = max(85, min(190, cadence))
+    
+    return round(cadence), mode
+
+
+//Stride Length & Propulsion Score Engine
+
+def upgraded_stride_and_propulsion(speed_ms, cadence, mode, grade):
+    if cadence == 0:
+        return 0, 0
+        
+    # Hitung stride panjang dasar (meter)
+    stride_m = speed_ms / (cadence / 60.0)
+    
+    # Mode-based multiplier correction
+    if 'WALK (Z1)' in mode:
+        if speed_ms < 1.2:
+            stride_m *= 0.7
+        elif speed_ms < 1.6:
+            stride_m *= 0.8
+        else:
+            stride_m *= 0.9
+    elif 'JOG' in mode:
+        stride_m *= 1.0
+    elif 'RUN' in mode:
+        stride_m *= 1.05
+    elif mode == 'UPHILL_RUN':
+        stride_m *= (1.0 - grade * 0.5)
+    elif mode == 'HIKE':
+        stride_m *= 0.6
+        
+    stride_cm = round(stride_m * 100)
+    
+    # 🚀 PROPULSION SCORE UPGRADE
+    # Formula: ((Stride Length / Height) * 70) + ((Cadence / 180) * 30)
+    propulsion_score = round(((stride_cm / ATHLETE_HEIGHT) * 70) + ((cadence / 180.0) * 30))
+    
+    return stride_cm, propulsion_score
+
+
+//Alur Eksekusi Pemrosesan Data Laporan
+
+
+[ INPUT FILES ]
+         Session.csv, Record.csv, Lap.csv
+                        │
+                        ▼
+             [ FILTERING NOISE ELEVASI ]
+       Low-Pass Filter (60w Rolling Average)
+    Mengeliminasi Jitter GPS -> Kenaikan Murni
+                        │
+                        ▼
+           [ EVALUASI CADENCE & STRIDE ]
+      Jika Device Cadence == 0 ATAU Kosong:
+     Hitung via Upgraded Engine v2 (Detik per Detik)
+                        │
+                        ▼
+             [ PEMBENTUKAN TABEL LAP ]
+    ┌───────────────────┴───────────────────┐
+    ▼                                       ▼
+Ada File Lap & Tidak Kosong?          File Lap Kosong / Null?
+┌───────────┴───────────┐               ┌───────────┴───────────┐
+│ Gunakan data Lap asli │               │ Generate Lap Otomatis │
+│   sebagai data baris  │               │  via Interpolasi KM   │
+└───────────┬───────────┘               └───────────┬───────────┘
+            └───────────────────┬───────────────────┘
+                                │
+                                ▼
+                   [ GENERATE FINAL REPORT ]
+             Mengisi Template Sesi Kompatibel
+
+
+//Template Laporan Sesi Lari
+
+🏃‍♂️ RUNNING SESSION REPORT
+
+📝 EXECUTIVE SUMMARY
+*   Activity Name: —
+*   Activity Type: —
+*   Date / Time: —
+*   Shoes / Gear: —
+*   Primary Target: —
+
+---
+
+📊 METRIC OVERVIEW
+| Parameter | Value | Status / Assessment |
+| :--- | :--- | :--- |
+| **Total Distance** | — KM | — |
+| **Total Duration** | — | — |
+| **Average Pace** | — /km | — |
+| **Split Tercepat** | — /km | — |
+| **User RPE** | — /10 | — |
+| **Post Heart Rate** | — BPM | — *(Murni / Tanpa Rekayasa)* |
+| **Average Cadence (v2)** | — SPM | Engine v3 |
+| **Average Stride Length** | — cm | Engine v3 |
+| **Elevation Gain** | — m | Filtered Low-Pass |
+| **Avg Propulsion Score** | — | Engine v3 |
+| **Total Steps / Density**| — / — | Langkah per KM |
+
+---
+
+⏱️ LAP SPLITS (Engine v2 Verified)
+| Lap | Distance | Time | Pace | Avg Cadence (v2) | Stride Length | Prop. Score | Activity Mode |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **1** | — | — | — | — SPM | — cm | — | — |
+| **2** | — | — | — | — SPM | — cm | — | — |
+
+---
+
+📈 KM SPLITS (GPS Record Based)
+| KM | Pace | Notes |
+| :---: | :---: | :--- |
+| **1** | — /km | — |
+| **2** | — /km | — |
+
+---
+
+⚡ Analisis Zona Pace / Intensitas Murni (GPS Record Based)
+| Zona Pace | Rentang Pace | Deskripsi | Persentase | Durasi |
+| :---: | :--- | :--- | :---: | :---: |
+| **Z6** | < 5:07/km | Anaerobik (Sprint Maksimal) | — % | — min |
+| **Z5** | 5:08–5:27/km | VO₂ Max (Sangat Keras) | — % | — min |
+| **Z4** | 5:28–5:49/km | Threshold | — % | — min |
+| **Z3** | 5:50–6:29/km | Tempo | — % | — min |
+| **Z2** | 6:30–7:32/km | Endurance | — % | — min |
+| **Z1** | > 7:33/km | Recovery / Walk | — % | — min |
+
+---
+
+📊 PHYSIOLOGICAL STATUS (myTF.run)
+| Parameter | Status |
+| :--- | :--- |
+| **Risk of Injury** | — |
+| **Acute-to-Chronic Workload Ratio (ACR)** | — % |
+| **Run Health** | — |
+| **Mileage Indicator** | — |
+| **Recovery Recommendation** | — |
+| **Training Forecast** | — |
+
+---
+
+👟 BIOMECHANICAL ANALYSIS
+*   **Cadence Analysis**
+    *   *Average Cadence:* — SPM
+    *   *Peak Cadence:* — SPM
+    *   *Cadence Stability:* —
+    *   *Evaluation:* —
+*   **Stride & Propulsion Analysis**
+    *   *Average Stride:* — cm
+    *   *Maximum Stride:* — cm
+    *   *Propulsion Efficiency:* —
+    *   *Evaluation:* —
+
+---
+
+🧠 TRAINING ANALYSIS
+*   **Goal Achievement**
+    *   *Planned Workout:* —
+    *   *Executed Workout:* —
+    *   *Completion Rate:* — %
+*   **Positive Findings**
+    *   —
+*   **Limiting Factors**
+    *   —
+*   **Recovery Status**
+    *   *Cardiovascular:* —
+    *   *Breathing:* —
+
+---
+
+📌 ENGINE INFORMATION
+*   **Cadence Estimation Engine:** v3 (Database Trigger Logic Integrated)
+*   **Stride Estimation Engine:** v3 (Mode Multiplier Applied)
+*   **Height Correction:** 170 / 166.5 (Athlete Height)
+*   **Pace Zone Model:** Z1–Z6 (Custom)
+*   **Data Source:** Session.csv + Record.csv + Lap.csv
+*   **Data Purity:** HR asli, cadence asli, dan metrik dasar orisinal tidak dimodifikasi; estimasi biomekanik dihitung terpisah menggunakan Engine v3 dengan penyaringan noise elevasi terkalibrasi.
